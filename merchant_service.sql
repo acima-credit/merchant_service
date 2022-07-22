@@ -1,19 +1,10 @@
--- DROP DATABASE IF EXISTS merchant_service;
-
--- CREATE DATABASE merchant_service;
-
--- Extension: uuid-ossp
-
-CREATE EXTENSION IF NOT EXISTS "uuid-ossp"
-	SCHEMA "public"
-	VERSION "1.1";
-
 -- Drop Foreign Key Constraints
+
 DO $$
 DECLARE r record;
 BEGIN
-	FOR r IN (SELECT table_schema, table_name, constraint_name FROM information_schema.table_constraints WHERE constraint_schema = 'public' AND constraint_type = 'FOREIGN KEY' ) 
-	LOOP 
+	FOR r IN (SELECT table_schema, table_name, constraint_name FROM information_schema.table_constraints WHERE constraint_schema = 'public' AND constraint_type = 'FOREIGN KEY' )
+	LOOP
 		RAISE info '%','dropping '||r.constraint_name;
 		execute CONCAT('ALTER TABLE ' || quote_ident(r.table_schema) || '.' || quote_ident(r.table_name) || ' DROP CONSTRAINT ' || quote_ident(r.constraint_name));
 	END LOOP;
@@ -68,7 +59,7 @@ CREATE TABLE public.industry (
 	deleted_at timestamp NOT NULL,
 	display_name varchar NOT NULL,
 	primary_industry boolean NOT NULL,
-	CONSTRAINT industy_pk PRIMARY KEY (id)
+	CONSTRAINT industry_pk PRIMARY KEY (id)
 );
 
 CREATE TABLE public.phone_type (
@@ -116,8 +107,8 @@ CREATE TABLE public.agreement(
 	deactivated_at timestamp NULL,
 	signing_method_id uuid NULL,
 	signed_at timestamp NULL,
-	signed_name varchar NULL, 
-	signed_title varchar NULL, 
+	signed_name varchar NULL,
+	signed_title varchar NULL,
 	signed_agreement_url varchar NULL,
 	CONSTRAINT agreement_pk PRIMARY KEY (id)
 );
@@ -271,11 +262,11 @@ CREATE TABLE public.buying_group (
 
 ALTER TABLE public.phone  ADD CONSTRAINT phone_fk_phone_type FOREIGN KEY (phone_type_id) REFERENCES phone_type(id);
 ALTER TABLE public.agreement ADD CONSTRAINT agreement_fk_signing_method FOREIGN KEY (signing_method_id) REFERENCES signing_method(id);
-ALTER TABLE public.assigned_representatives ADD CONSTRAINT assigned_represenatives_fk_merchant FOREIGN KEY (merchant_id) REFERENCES merchant(id);
+ALTER TABLE public.assigned_representatives ADD CONSTRAINT assigned_representatives_fk_merchant FOREIGN KEY (merchant_id) REFERENCES merchant(id);
 ALTER TABLE public.merchant ADD CONSTRAINT merchant_fk_address FOREIGN KEY (primary_address_id) REFERENCES public.address(id);
 ALTER TABLE public.merchant ADD CONSTRAINT merchant_fk_phone FOREIGN KEY (primary_phone_id) REFERENCES public.phone(id);
 ALTER TABLE public.merchant ADD CONSTRAINT merchant_fk_primary_email FOREIGN KEY (email_id) REFERENCES public.email(id);
-ALTER TABLE public.merchant ADD CONSTRAINT merchant_fk_funding_email FOREIGN KEY (funding_email_id) REFERENCES public.email(id);  
+ALTER TABLE public.merchant ADD CONSTRAINT merchant_fk_funding_email FOREIGN KEY (funding_email_id) REFERENCES public.email(id);
 ALTER TABLE public.merchant ADD CONSTRAINT merchant_fk_source FOREIGN KEY (source_id) REFERENCES public.sources(id);
 ALTER TABLE public.merchant_agreements ADD CONSTRAINT merchant_agreements_fk_merchant FOREIGN KEY (merchant_id) REFERENCES public.merchant(id);
 ALTER TABLE public.merchant_agreements ADD CONSTRAINT merchant_agreements_fk_agreement FOREIGN KEY (agreement_id) REFERENCES public.agreement(id);
