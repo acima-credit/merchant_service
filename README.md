@@ -1,4 +1,5 @@
 # merchant_service Project
+###This project is part of the installment lending project, it has no connections to the standard Acima system. 
 
 This project uses Quarkus, the Supersonic Subatomic Java Framework.
 

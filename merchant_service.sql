@@ -21,6 +21,7 @@ END$$;
 
 -- Drop tables it they exist
 
+DROP TABLE IF EXISTS public.buying_group;
 DROP TABLE IF EXISTS public.merchant_industries;
 DROP TABLE IF EXISTS public.location_phones;
 DROP TABLE IF EXISTS public.location_users;
@@ -184,7 +185,6 @@ CREATE TABLE public.users (
 	source_id uuid NULL,
 	application_short_link varchar NULL,
 	tax_id_number varchar NULL,
-	acima_merchant_guid varchar NULL,
 	CONSTRAINT merchant_pk PRIMARY KEY (id)
 );
 
@@ -257,6 +257,16 @@ CREATE TABLE public.merchant_industries (
 	CONSTRAINT merchant_industries_pk PRIMARY KEY (id)
 );
 
+CREATE TABLE public.buying_group (
+	id uuid NOT NULL DEFAULT uuid_generate_v1(),
+	created_at timestamp DEFAULT now(),
+	updated_at timestamp NOT NULL,
+	deactivated_at timestamp NULL,
+	deleted_at timestamp NULL,
+	value varchar NOT NULL,
+	CONSTRAINT buying_group_pk PRIMARY KEY (id)
+);
+
 -- Foreign Keys
 
 ALTER TABLE public.phone  ADD CONSTRAINT phone_fk_phone_type FOREIGN KEY (phone_type_id) REFERENCES phone_type(id);
@@ -279,3 +289,4 @@ ALTER TABLE public.location_phones ADD CONSTRAINT location_phones_fk_location FO
 ALTER TABLE public.location_phones ADD CONSTRAINT location_phones_fk_phone FOREIGN KEY (phone_id) REFERENCES public.phone(id);
 ALTER TABLE public.merchant_industries ADD CONSTRAINT merchant_industries_fk_merchant FOREIGN KEY (merchant_id) REFERENCES public.merchant(id);
 ALTER TABLE public.merchant_industries ADD CONSTRAINT merchant_industries_fk_industry FOREIGN KEY (industry_id) REFERENCES public.industry(id);
+ALTER TABLE public.merchant ADD CONSTRAINT merchant_fk_buying_group FOREIGN KEY (buying_group_id) REFERENCES public.buying_group(id);
